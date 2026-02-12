@@ -7,20 +7,24 @@ local HttpService = game:GetService("HttpService")
 local githubUrls = {
     "https://raw.githubusercontent.com/dhon20640-coder/Volt/refs/heads/main/VoltHub.md",
     -- Adicione mais URLs aqui:
-    -- "https://raw.githubusercontent.com/dhon20640-coder/DevVolt/refs/heads/main/Status.lua",
+    -- "https://raw.githubusercontent.com/dhon20640-coder/DevVolt/refs/heads/main/Status.lua"
 }
 
 -- Função para baixar e executar um script
 local function executeGitHubScript(url)
-    spawn(function()
+    task.spawn(function()
         local success, result = pcall(function()
-            local response = game:HttpGet(url)
-            return response
+            return game:HttpGetAsync(url)
         end)
         
-        if success then
+        if success and result then
             local executeSuccess, executeError = pcall(function()
-                loadstring(result)()
+                local func = loadstring(result)
+                if func then
+                    func()
+                else
+                    error("Falha ao carregar o script")
+                end
             end)
             
             if executeSuccess then
